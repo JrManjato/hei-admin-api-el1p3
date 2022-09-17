@@ -62,8 +62,8 @@ public class PlaceIT {
   public static Place aCreatablePlace() {
     return new Place()
         .id("place 21-" + randomUUID())
-        .city("some city")
-        .location("some location")
+        .city("Random city")
+        .location("Random location")
         ;
   }
 
@@ -147,7 +147,7 @@ public class PlaceIT {
 
     Place toUpdate = api.createOrUpdatePlace(
         aCreatablePlace());
-    toUpdate.setLocation("A new location zero");
+    toUpdate.setLocation("Fianarantsoa");
     Place updated = api.createOrUpdatePlace(toUpdate);
     toUpdate.setId(updated.getId());
 

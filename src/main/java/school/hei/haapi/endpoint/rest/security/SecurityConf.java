@@ -1,5 +1,13 @@
 package school.hei.haapi.endpoint.rest.security;
 
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+import static school.hei.haapi.endpoint.rest.security.model.Role.MANAGER;
+import static school.hei.haapi.endpoint.rest.security.model.Role.STUDENT;
+import static school.hei.haapi.endpoint.rest.security.model.Role.TEACHER;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,14 +21,6 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import school.hei.haapi.model.exception.ForbiddenException;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.OPTIONS;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
-import static school.hei.haapi.endpoint.rest.security.model.Role.MANAGER;
-import static school.hei.haapi.endpoint.rest.security.model.Role.STUDENT;
-import static school.hei.haapi.endpoint.rest.security.model.Role.TEACHER;
 
 @Configuration
 @Slf4j
@@ -75,11 +75,13 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
         .antMatchers("/ping").permitAll()
         .antMatchers(OPTIONS, "/**").permitAll()
         .antMatchers("/whoami").authenticated()
+        .antMatchers("/whoamiface").authenticated()
         .antMatchers(GET, "/students").hasAnyRole(TEACHER.getRole(), MANAGER.getRole())
         .requestMatchers(new SelfMatcher(GET, "/students/*/fees/*")).hasAnyRole(STUDENT.getRole())
         .antMatchers(GET, "/students/*/fees/*").hasAnyRole(MANAGER.getRole())
         .requestMatchers(new SelfMatcher(GET, "/students/*/fees")).hasAnyRole(STUDENT.getRole())
-        .requestMatchers(new SelfMatcher(GET, "/students/*/fees/*/payments")).hasAnyRole(STUDENT.getRole())
+        .requestMatchers(new SelfMatcher(GET, "/students/*/fees/*/payments"))
+        .hasAnyRole(STUDENT.getRole())
         .antMatchers(GET, "/students/*/fees/*/payments").hasAnyRole(MANAGER.getRole())
         .antMatchers(POST, "/students/*/fees/*/payments").hasAnyRole(MANAGER.getRole())
         .antMatchers(GET, "/students/*/fees").hasAnyRole(MANAGER.getRole())
@@ -99,7 +101,22 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
         .antMatchers("/managers/**").hasAnyRole(MANAGER.getRole())
         .antMatchers(GET, "/groups").authenticated()
         .antMatchers(GET, "/groups/*").authenticated()
+        .antMatchers(GET, "/groups/*/students").authenticated()
         .antMatchers(PUT, "/groups/**").hasAnyRole(MANAGER.getRole())
+        .antMatchers(GET, "/courses").authenticated()
+        .antMatchers(GET, "/courses/*").authenticated()
+        .antMatchers(PUT, "/courses/**").hasAnyRole(MANAGER.getRole())
+        .antMatchers(GET, "/events").authenticated()
+        .antMatchers(GET, "/events/*").authenticated()
+        .antMatchers(PUT, "/events").hasAnyRole(MANAGER.getRole())
+        .antMatchers(DELETE, "/events/*").hasAnyRole(MANAGER.getRole())
+        .antMatchers(GET, "/places").authenticated()
+        .antMatchers(PUT, "/places").hasAnyRole(MANAGER.getRole())
+        .antMatchers(GET, "/events/*/participants").authenticated()
+        .antMatchers(GET, "/events/*/participants/*").authenticated()
+        .antMatchers(PUT, "/events/*/participants").hasAnyRole(MANAGER.getRole())
+        .antMatchers(POST, "events/*/participants/attendance").hasAnyRole(MANAGER.getRole(),
+            TEACHER.getRole())
         .antMatchers("/**").denyAll()
 
         // disable superfluous protections

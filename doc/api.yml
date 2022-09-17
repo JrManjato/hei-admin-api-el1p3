@@ -45,6 +45,36 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/whoamiface':
+    post:
+      tags:
+        - Security
+      summary: tells you who you are by a picture of you.
+      operationId: whoamiface
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Who you are
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Whoami'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/ping':
     get:
       tags:
@@ -1136,6 +1166,42 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/events/{event_id}/participants/attendance':
+    post:
+      tags:
+        - Events
+      summary: checks registered participants' attendance for a specified event
+      operationId: checkAttendance
+      parameters:
+        - name: event_id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Who you are
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Whoami'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerAuth:
@@ -1219,6 +1285,9 @@ components:
         group:
           type: string
           description: id of the group this student belongs to
+        picture:
+          type: string
+          example: 'abc.jpeg'
     EnableStatus:
       type: string
       enum:
@@ -1354,7 +1423,7 @@ components:
           example: "uuid"
         location:
           type: string
-          example: "Haute École d'Informatique"
+          example: "Haute Ecole d'Informatique"
         city:
           type: string
           example: "Antananarivo"
@@ -1364,21 +1433,21 @@ components:
         id:
           type: string
           example: "uuid"
+        responsible:
+          type: string
+          example: "Tokimahery RAMAROZAKA"
         type:
           type: string
           example: "Course"
+        place:
+          type: string
+          example: "Haute Ecole d'Informatique Antananarivo"
         start_datetime:
           type: string
           format: date-time
         end_datetime:
           type: string
           format: date-time
-        responsible:
-          type: string
-          example: "Tokimahery RAMAROZAKA"
-        place:
-          type: string
-          example: "Haute École d'Informatique Antananarivo"
     CreateEventParticipants:
       type: object
       properties:
@@ -1394,7 +1463,7 @@ components:
           example: "uuid"
         ref:
           type: string
-          example: "STD21000"
+          example: "STD21034"
         event_id:
           type: string
         status:
